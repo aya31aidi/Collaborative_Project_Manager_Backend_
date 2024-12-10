@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.projectmanager.persistance.entities.Task;
+import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ITask;
 
 import java.util.List;
@@ -18,6 +19,10 @@ public class TaskController {
     @PostMapping
     public void createTask(@RequestBody Task task) {
         taskService.addTask(task);
+    }
+    @PutMapping("/{id}")
+    public void updateTag(@PathVariable Long id, @RequestBody Task task) {
+        taskService.updateTask(id, task);
     }
 
     @GetMapping("/{id}")

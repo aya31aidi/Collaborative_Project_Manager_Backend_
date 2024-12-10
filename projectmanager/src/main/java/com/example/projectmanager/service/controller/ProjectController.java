@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.projectmanager.persistance.entities.Project;
+import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.IProject;
 
 import java.util.List;
@@ -21,6 +22,11 @@ public class ProjectController {
         projectService.addProject(project);
     }
 
+    @PutMapping("/{id}")
+    public void updateTag(@PathVariable Long id, @RequestBody Project project) {
+        projectService.updateProject(id, project);
+    }
+    
     @GetMapping("/{id}")
     public Project getProjectById(@PathVariable Long id) {
         return projectService.getProjectById(id);

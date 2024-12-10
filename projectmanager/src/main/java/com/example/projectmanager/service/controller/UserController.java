@@ -4,6 +4,7 @@ package com.example.projectmanager.service.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.projectmanager.persistance.entities.Tag;
 import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.IUser;
 
@@ -19,6 +20,10 @@ public class UserController {
     @PostMapping
     public void createUser(@RequestBody User user) {
         userService.addUser(user);
+    }
+    @PutMapping("/{id}")
+    public void updateTag(@PathVariable Long id, @RequestBody User user) {
+        userService.updateUser(id, user);
     }
 
     @GetMapping("/{id}")

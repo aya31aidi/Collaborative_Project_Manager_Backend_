@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.projectmanager.persistance.entities.Sprint;
+import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ISprint;
 
 import java.util.List;
@@ -20,6 +21,10 @@ public class SprintController {
         sprintService.addSprint(sprint);
     }
 
+    @PutMapping("/{id}")
+    public void updateTag(@PathVariable Long id, @RequestBody Sprint sprint) {
+        sprintService.updateSprint(id, sprint);
+    }
     @GetMapping("/{id}")
     public Sprint getSprintById(@PathVariable Long id) {
         return sprintService.getSprintById(id);
