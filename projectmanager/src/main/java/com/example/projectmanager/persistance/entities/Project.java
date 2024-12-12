@@ -1,11 +1,16 @@
 package com.example.projectmanager.persistance.entities;
 
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "projects")
-public class Project {
+public class Project implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,10 +22,12 @@ public class Project {
     @Column(nullable = false)
     private String description; // Description du projet
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @JsonManagedReference
     private List<Team> teams; // Équipes associées au projet
 
     @OneToMany(mappedBy = "project")
+    @JsonManagedReference
     private List<Sprint> sprints; // Liste des sprints du projet
 
     // Constructeurs

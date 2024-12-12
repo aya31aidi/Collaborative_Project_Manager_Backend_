@@ -1,11 +1,15 @@
 package com.example.projectmanager.persistance.entities;
 
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +31,7 @@ public class User {
     private String role; // Exemple : "Admin", "Developer", etc.
 
     @ManyToMany(mappedBy = "users")
+    @JsonBackReference
     private List<Team> teams; // Équipes auxquelles appartient l'utilisateur
 
     // Constructeurs

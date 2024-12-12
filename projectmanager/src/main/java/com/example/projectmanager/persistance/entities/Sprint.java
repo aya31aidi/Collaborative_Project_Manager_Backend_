@@ -1,12 +1,17 @@
 package com.example.projectmanager.persistance.entities;
 
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "sprints")
-public class Sprint {
+public class Sprint implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,9 +29,11 @@ public class Sprint {
     private Date endDate; // Date de fin du sprint
 
     @ManyToOne
+    @JsonBackReference
     private Project project; // Projet auquel le sprint est associé
 
     @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Task> tasks; // Liste des tâches associées au sprint
 
     // Constructeurs

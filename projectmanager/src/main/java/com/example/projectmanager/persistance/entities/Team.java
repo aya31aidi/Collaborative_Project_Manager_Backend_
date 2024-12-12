@@ -1,11 +1,16 @@
 package com.example.projectmanager.persistance.entities;
 
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "teams")
-public class Team {
+public class Team implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,9 +20,11 @@ public class Team {
     private String name; // Nom de l'équipe
 
     @ManyToMany
+    @JsonManagedReference
     private List<User> users; // Liste des utilisateurs dans l'équipe
 
-    @ManyToOne
+    @ManyToOne( fetch=FetchType.EAGER)
+    @JsonBackReference
     private Project project; // Projet auquel l'équipe est associée
 
     // Constructeurs

@@ -1,12 +1,17 @@
 package com.example.projectmanager.persistance.entities;
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.util.List;
 
+import com.example.projectmanager.enums.TaskPriority;
 import com.example.projectmanager.enums.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
+public class Task implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,22 +28,25 @@ public class Task {
     private TaskStatus status; // Statut de la tâche (ENUM)
 
     @Column(nullable = false)
-    private int priority; // Priorité (par exemple : 1 = Haute, 2 = Moyenne, 3 = Basse)
+    @Enumerated(EnumType.STRING)
+    private TaskPriority priority; 
 
     @ManyToOne
+    @JsonBackReference
     private Sprint sprint; // Sprint auquel appartient la tâche
 
     @ManyToOne
     private User assignedTo; // Utilisateur assigné à la tâche
 
     @ManyToMany
+    @JsonManagedReference
     private List<Tag> tags; // Étiquettes associées à la tâche
 
     // Constructeurs
     public Task() {
     }
 
-    public Task(String title, String description, TaskStatus status, int priority) {
+    public Task(String title, String description, TaskStatus status, TaskPriority priority) {
         this.title = title;
         this.description = description;
         this.status = status;
@@ -78,11 +86,11 @@ public class Task {
         this.status = status;
     }
 
-    public int getPriority() {
+    public TaskPriority getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(TaskPriority priority) {
         this.priority = priority;
     }
 

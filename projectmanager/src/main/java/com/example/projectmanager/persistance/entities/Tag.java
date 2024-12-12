@@ -1,11 +1,16 @@
 package com.example.projectmanager.persistance.entities;
 
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "tags")
-public class Tag {
+public class Tag implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,6 +20,7 @@ public class Tag {
     private String name; // Nom de l'étiquette (unique)
 
     @ManyToMany(mappedBy = "tags")
+    @JsonBackReference
     private List<Task> tasks; // Liste des tâches associées à cette étiquette
 
     // Constructeurs
