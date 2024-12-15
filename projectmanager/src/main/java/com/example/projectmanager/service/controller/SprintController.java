@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.projectmanager.persistance.entities.Sprint;
+import com.example.projectmanager.persistance.entities.Team;
 import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ISprint;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -39,5 +41,20 @@ public class SprintController {
     public List<Sprint> getAllSprints() {
         return sprintService.getAllSprints();
     }
+    
+    @GetMapping("/{id}/users")
+    public List<User> getUsersForSprint(@PathVariable Long id) {
+        Sprint sprint = sprintService.getSprintById(id); // Get the sprint by its ID
+        List<User> users = new ArrayList<>();
+        
+        // Get the single team of the project and add its users
+        Team team = sprint.getProject().getTeam();
+        if (team != null) {
+            users.addAll(team.getUsers());
+        }
+        
+        return users;
+    }
+
 }
 

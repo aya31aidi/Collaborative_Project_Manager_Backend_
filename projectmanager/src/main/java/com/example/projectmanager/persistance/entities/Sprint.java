@@ -7,7 +7,9 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "sprints")
@@ -17,20 +19,21 @@ public class Sprint implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name; // Nom du sprint
+    @JsonProperty("name")
+    private String name; 
 
-    @Column(nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date startDate; // Date de début du sprint
+    @JsonProperty("startDate")
+    private Date startDate; 
 
-    @Column(nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date endDate; // Date de fin du sprint
+    @JsonProperty("endDate")
+    private Date endDate; 
 
     @ManyToOne
+    @JsonProperty("project")
     @JsonBackReference
-    private Project project; // Projet auquel le sprint est associé
+    private Project project; 
 
     @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL)
     @JsonManagedReference

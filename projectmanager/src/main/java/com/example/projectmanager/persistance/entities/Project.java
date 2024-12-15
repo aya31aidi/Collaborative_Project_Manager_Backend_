@@ -6,7 +6,9 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "projects")
@@ -16,19 +18,19 @@ public class Project implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name; // Nom du projet
+    @JsonProperty("name")
+    private String name; 
 
-    @Column(nullable = false)
-    private String description; // Description du projet
+    @JsonProperty("description")
+    private String description; 
 
-    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-    @JsonManagedReference
-    private List<Team> teams; // Équipes associées au projet
+    @OneToOne
+    @JoinColumn(name = "team_id") 
+    private Team team; 
 
     @OneToMany(mappedBy = "project")
     @JsonManagedReference
-    private List<Sprint> sprints; // Liste des sprints du projet
+    private List<Sprint> sprints; 
 
     // Constructeurs
     public Project() {
@@ -64,12 +66,12 @@ public class Project implements Serializable{
         this.description = description;
     }
 
-    public List<Team> getTeams() {
-        return teams;
+    public Team getTeam() {
+        return team;
     }
 
-    public void setTeams(List<Team> teams) {
-        this.teams = teams;
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public List<Sprint> getSprints() {

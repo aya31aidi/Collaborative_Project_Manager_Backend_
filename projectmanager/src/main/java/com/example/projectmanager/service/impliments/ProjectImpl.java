@@ -26,7 +26,7 @@ public class ProjectImpl implements IProject {
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + id));
         existingProject.setName(project.getName());
         existingProject.setDescription(project.getDescription());
-        existingProject.setTeams(project.getTeams());
+        existingProject.setTeam(project.getTeam());
         existingProject.setSprints(project.getSprints());
         projectRepository.save(existingProject);
     }

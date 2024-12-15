@@ -18,6 +18,7 @@ public class TagController {
     @PostMapping
     public void createTag(@RequestBody Tag tag) {
         tagService.addTag(tag);
+        System.out.println("Reçu : " + tag);
     }
 
     @PutMapping("/{id}")

@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users")
@@ -15,24 +17,24 @@ public class User implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String username; // Nom d'utilisateur (unique)
+    @JsonProperty("username")
+    private String username; 
 
-    @Column(nullable = false)
-    private String fullName; // Nom complet de l'utilisateur
+    @JsonProperty("fullName")
+    private String fullName; 
 
-    @Column(nullable = false, unique = true)
-    private String email; // Adresse email (unique)
+    @JsonProperty("email")
+    private String email; 
 
-    @Column(nullable = false)
-    private String password; // Mot de passe
+    @JsonProperty("password")
+    private String password; 
 
-    @Column(nullable = false)
-    private String role; // Exemple : "Admin", "Developer", etc.
-
+    @JsonProperty("role")
+    private String role; 
+    
     @ManyToMany(mappedBy = "users")
     @JsonBackReference
-    private List<Team> teams; // Équipes auxquelles appartient l'utilisateur
+    private List<Team> teams; 
 
     // Constructeurs
     public User() {

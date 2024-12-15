@@ -7,7 +7,9 @@ import java.util.List;
 import com.example.projectmanager.enums.TaskPriority;
 import com.example.projectmanager.enums.TaskStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "tasks")
@@ -17,30 +19,31 @@ public class Task implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title; // Titre de la tâche
+    @JsonProperty("title")
+    private String title; 
+    @JsonProperty("description")
+    private String description; 
 
-    @Column
-    private String description; // Description de la tâche
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private TaskStatus status; // Statut de la tâche (ENUM)
+    @JsonProperty("status")
+    private TaskStatus status; 
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @JsonProperty("priority")
     private TaskPriority priority; 
 
     @ManyToOne
+    @JsonProperty("sprint")
     @JsonBackReference
-    private Sprint sprint; // Sprint auquel appartient la tâche
+    private Sprint sprint; 
 
     @ManyToOne
-    private User assignedTo; // Utilisateur assigné à la tâche
+    @JsonProperty("assignedTo")
+    private User assignedTo; 
 
     @ManyToMany
-    @JsonManagedReference
-    private List<Tag> tags; // Étiquettes associées à la tâche
+    @JsonIgnore
+    private List<Tag> tags; 
 
     // Constructeurs
     public Task() {
