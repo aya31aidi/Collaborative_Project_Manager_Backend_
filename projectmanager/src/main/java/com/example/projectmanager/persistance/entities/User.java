@@ -47,7 +47,9 @@ public class User implements Serializable{
         this.password = password;
         this.role = role;
     }
-
+    public User(Long id) {
+        this.id = id;
+    }
     // Getters et Setters
     public Long getId() {
         return id;

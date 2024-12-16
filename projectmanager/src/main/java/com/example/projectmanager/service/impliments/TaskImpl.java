@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.projectmanager.enums.TaskStatus;
 import com.example.projectmanager.persistance.dao.TaskRepository;
+import com.example.projectmanager.persistance.dao.UserRepository;
 import com.example.projectmanager.persistance.entities.Task;
+import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ITask;
 
 import java.util.List;
@@ -16,10 +18,17 @@ public class TaskImpl implements ITask {
 
     @Autowired
     private TaskRepository taskRepository;
-
+    @Autowired
+    private UserRepository userRepository;
+    
     @Override
     public Task addTask(Task task) {
-        return taskRepository.save(task);
+        // Récupérer l'utilisateur par ID et assigner à la tâche
+        User assignedUser = userRepository.findById(task.getAssignedTo().getId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + task.getAssignedTo().getId()));
+
+        task.setAssignedTo(assignedUser);  // Assigner l'utilisateur à la tâche
+        return taskRepository.save(task);  // Sauvegarder la tâche
     }
 
     @Override

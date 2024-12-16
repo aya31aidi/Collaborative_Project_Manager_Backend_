@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.projectmanager.enums.TaskStatus;
+import com.example.projectmanager.persistance.dao.ProjectRepository;
+import com.example.projectmanager.persistance.dao.SprintRepository;
 import com.example.projectmanager.persistance.entities.Task;
 import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ITask;
@@ -22,7 +24,7 @@ public class TaskController {
     private ITask taskService;
 
    
-    @PostMapping()
+    @PostMapping("")
     public void createTask(@RequestBody Task task) {
         taskService.addTask(task);
     }
