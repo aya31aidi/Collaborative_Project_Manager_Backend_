@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.projectmanager.enums.TaskStatus;
+import com.example.projectmanager.persistance.dao.SprintRepository;
 import com.example.projectmanager.persistance.dao.TaskRepository;
 import com.example.projectmanager.persistance.dao.UserRepository;
+import com.example.projectmanager.persistance.entities.Sprint;
 import com.example.projectmanager.persistance.entities.Task;
 import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ITask;
@@ -20,16 +22,25 @@ public class TaskImpl implements ITask {
     private TaskRepository taskRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SprintRepository sprintRepository;
     
     @Override
     public Task addTask(Task task) {
         // Récupérer l'utilisateur par ID et assigner à la tâche
         User assignedUser = userRepository.findById(task.getAssignedTo().getId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + task.getAssignedTo().getId()));
+        
+        // Récupérer le sprint par ID et assigner à la tâche
+        Sprint sprint = sprintRepository.findById(task.getSprint().getId())
+                .orElseThrow(() -> new RuntimeException("Sprint not found with id: " + task.getSprint().getId()));
 
         task.setAssignedTo(assignedUser);  // Assigner l'utilisateur à la tâche
+        task.setSprint(sprint);  // Assigner le sprint à la tâche
+        
         return taskRepository.save(task);  // Sauvegarder la tâche
     }
+
 
     @Override
     public void updateTask(Long id, Task task) {

@@ -35,6 +35,7 @@ public class Task implements Serializable{
     @ManyToOne
     @JsonProperty("sprint")
     @JsonBackReference
+    @JoinColumn(name = "sprint_id", referencedColumnName = "id")
     private Sprint sprint; 
 
     @ManyToOne
