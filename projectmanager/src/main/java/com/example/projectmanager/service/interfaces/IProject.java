@@ -11,5 +11,6 @@ public interface IProject {
     void deleteProject(Long id);
     Project getProjectById(Long id);
     List<Project> getAllProjects();
+	Project getProjectByTeamId(Long id);
 }
 

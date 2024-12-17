@@ -1,6 +1,7 @@
 package com.example.projectmanager.service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.projectmanager.persistance.entities.Team;
@@ -8,6 +9,7 @@ import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ITeam;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/teams")
@@ -26,7 +28,7 @@ public class TeamController {
         teamService.updateTeam(id, team);
     }
     @GetMapping("/{id}")
-    public Team getTeamById(@PathVariable Long id) {
+    public Optional<Team> getTeamById(@PathVariable Long id) {
         return teamService.getTeamById(id);
     }
 
@@ -39,5 +41,14 @@ public class TeamController {
     public List<Team> getAllTeams() {
         return teamService.getAllTeams();
     }
+    
+    @GetMapping("/{id}/users")
+    public ResponseEntity<List<User>> getUsersByTeamId(@PathVariable Long id) {
+    	 Optional<Team> team = teamService.getTeamById(id);
+    	    if (team.isPresent()) {
+    	        return ResponseEntity.ok(team.get().getUsers());
+    	    } else {
+    	        return ResponseEntity.notFound().build();
+    	    }
 }
-
+}

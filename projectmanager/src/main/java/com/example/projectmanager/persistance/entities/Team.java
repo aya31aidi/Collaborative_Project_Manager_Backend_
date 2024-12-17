@@ -19,17 +19,17 @@ public class Team implements Serializable{
     private Long id;
 
     @JsonProperty("name")
-    private String name; // Nom de l'équipe
+    private String name; 
 
     @ManyToMany
     @JsonIgnore
-    private List<User> users; // Liste des utilisateurs dans l'équipe
+    private List<User> users; 
 
     @OneToOne(mappedBy = "team")
     @JsonIgnore
-    private Project project; // Projet auquel l'équipe est associée
+    private Project project; 
 
-    // Constructeurs
+
     public Team() {
     }
 
@@ -37,7 +37,6 @@ public class Team implements Serializable{
         this.name = name;
     }
 
-    // Getters et Setters
     public Long getId() {
         return id;
     }

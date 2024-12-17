@@ -8,6 +8,7 @@ import com.example.projectmanager.persistance.entities.Team;
 import com.example.projectmanager.service.interfaces.ITeam;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TeamImpl implements ITeam {
@@ -36,14 +37,14 @@ public class TeamImpl implements ITeam {
     }
 
     @Override
-    public Team getTeamById(Long id) {
-        return teamRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Team not found with id: " + id));
+    public Optional<Team> getTeamById(Long id) {
+        return teamRepository.findById(id);  // Retourne Optional<Team>
     }
 
     @Override
     public List<Team> getAllTeams() {
         return teamRepository.findAll();
     }
+
 }
 

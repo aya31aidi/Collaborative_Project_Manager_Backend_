@@ -46,4 +46,7 @@ public class ProjectImpl implements IProject {
     public List<Project> getAllProjects() {
         return projectRepository.findAll();
     }
+    public Project getProjectByTeamId(Long teamId) {
+        return projectRepository.findProjectByTeamId(teamId);
+    }
 }

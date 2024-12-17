@@ -2,6 +2,7 @@ package com.example.projectmanager.service.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.projectmanager.persistance.entities.Project;
@@ -40,6 +41,15 @@ public class ProjectController {
     @GetMapping
     public List<Project> getAllProjects() {
         return projectService.getAllProjects();
+    }
+    
+    @GetMapping("/team/{teamId}")
+    public ResponseEntity<Project> getProjectByTeamId(@PathVariable("teamId") Long teamId) {
+        Project project = projectService.getProjectByTeamId(teamId);
+        if (project != null) {
+            return ResponseEntity.ok(project);
+        }
+        return ResponseEntity.notFound().build();
     }
 }
 
