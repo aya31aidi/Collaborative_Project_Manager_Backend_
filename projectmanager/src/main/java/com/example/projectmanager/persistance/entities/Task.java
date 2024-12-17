@@ -42,8 +42,7 @@ public class Task implements Serializable{
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User assignedTo; 
 
-    @ManyToMany
-    @JsonIgnore
+    @OneToMany(mappedBy = "task")
     private List<Tag> tags; 
 
     // Constructeurs

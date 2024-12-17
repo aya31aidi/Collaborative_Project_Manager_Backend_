@@ -21,9 +21,10 @@ public class Tag implements Serializable{
     @JsonProperty("name")
     private String name; // Nom de l'étiquette (unique)
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToOne
+    @JoinColumn(name = "task_id")
     @JsonIgnore
-    private List<Task> tasks; // Liste des tâches associées à cette étiquette
+    private Task task;
 
     // Constructeurs
     public Tag() {
@@ -50,12 +51,12 @@ public class Tag implements Serializable{
         this.name = name;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    public Task getTask() {
+        return task;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void setTasks(Task task) {
+        this.task = task;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.example.projectmanager.service.interfaces;
 import java.util.List;
-
+import java.util.Optional;
 
 import com.example.projectmanager.persistance.entities.Tag;
 public interface ITag {
@@ -9,5 +9,5 @@ public interface ITag {
     void deleteTag(Long id);
     Tag getTagById(Long id);
     List<Tag> getAllTags();
-    Tag getTagByName(String name);
+    Optional<Tag> getTagByName(String name);
 }

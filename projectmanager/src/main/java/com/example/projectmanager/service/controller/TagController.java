@@ -41,8 +41,8 @@ public class TagController {
         return tagService.getAllTags();
     }
 
-    @GetMapping("/search")
+    /*@GetMapping("/search")
     public Tag getTagByName(@RequestParam String name) {
         return tagService.getTagByName(name);
-    }
+    }*/
 }
