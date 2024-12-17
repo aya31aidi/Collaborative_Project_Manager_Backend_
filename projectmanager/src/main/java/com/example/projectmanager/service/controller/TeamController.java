@@ -8,7 +8,9 @@ import com.example.projectmanager.persistance.entities.Team;
 import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ITeam;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -51,4 +53,19 @@ public class TeamController {
     	        return ResponseEntity.notFound().build();
     	    }
 }
+    @DeleteMapping("/{teamId}/users/{userId}")
+    public ResponseEntity<Map<String, String>> deleteUserFromTeam(@PathVariable Long teamId, @PathVariable Long userId) {
+        try {
+            teamService.deleteUserFromTeam(teamId, userId);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "User deleted successfully from team");
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "User or team not found");
+            return ResponseEntity.status(404).body(response);
+        }
+    }
+
+
 }

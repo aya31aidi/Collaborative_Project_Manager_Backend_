@@ -11,5 +11,6 @@ public interface ITeam {
     void deleteTeam(Long id);
     Optional<Team> getTeamById(Long id);
     List<Team> getAllTeams();
+    void deleteUserFromTeam(Long teamId, Long userId);
 }
 
