@@ -74,11 +74,14 @@ public class TagImpl implements ITag {
     public Optional<Tag> getTagByName(String name) {
         return tagRepository.findByName(name);
     }
-    @Override
+   /* @Override
     public Task findTaskFromTag(Long taskId) {
         return taskRepository.findById(taskId)
             .orElseThrow(() -> new RuntimeException("Task not found with id " + taskId));
+    }*/
+    @Override
+    public List<Tag> findTagsByTaskId(Long taskId) {
+        return taskRepository.findTagsByTaskId(taskId);
     }
-
 }
 

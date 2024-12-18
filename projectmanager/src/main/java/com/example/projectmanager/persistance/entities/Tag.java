@@ -19,14 +19,12 @@ public class Tag implements Serializable{
     private Long id;
 
     @JsonProperty("name")
-    private String name; // Nom de l'étiquette (unique)
+    private String name; 
 
     @ManyToOne
     @JoinColumn(name = "task_id")
-    @JsonIgnore
     private Task task;
 
-    // Constructeurs
     public Tag() {
     }
 

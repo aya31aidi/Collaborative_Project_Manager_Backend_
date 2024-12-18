@@ -11,5 +11,6 @@ public interface ITag {
     Optional<Tag> getTagByName(String name);
 	void addTag(String name, Long taskId);
 	void updateTag(Long id, Tag tag, Long idtask);
-	Task findTaskFromTag(Long taskId);
+	//Task findTaskFromTag(Long taskId);
+	List<Tag> findTagsByTaskId(Long taskId);
 }

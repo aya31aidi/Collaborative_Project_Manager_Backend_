@@ -13,6 +13,7 @@ import com.example.projectmanager.persistance.entities.Task;
 import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ITask;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +26,9 @@ public class TaskController {
 
    
     @PostMapping("")
-    public void createTask(@RequestBody Task task) {
-        taskService.addTask(task);
+    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+        Task savedTask = taskService.addTask(task);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedTask);
     }
 
     
@@ -50,19 +52,29 @@ public class TaskController {
         return taskService.getAllTasks();
     }
     @PutMapping("/{id}/status")
-    public ResponseEntity<String> updateTaskStatus(@PathVariable Long id, @RequestBody Map<String, String> statusUpdate) {
+    public ResponseEntity<Map<String, String>> updateTaskStatus(@PathVariable Long id, @RequestBody Map<String, String> statusUpdate) {
         String newStatusString = statusUpdate.get("status");
         try {
-            TaskStatus newStatus = TaskStatus.valueOf(newStatusString); // Convertit la chaîne en enum
+            TaskStatus newStatus = TaskStatus.valueOf(newStatusString); // Convert the string to enum
             boolean isUpdated = taskService.updateTaskStatus(id, newStatus);
 
             if (isUpdated) {
-                return ResponseEntity.ok("Task status updated successfully");
+                // Return a JSON response with a success message
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "Task status updated successfully");
+                return ResponseEntity.ok(response);
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
+                // Return a JSON response with an error message
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "Task not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid status value");
+            // Return a JSON response with an error message
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Invalid status value");
+            return ResponseEntity.badRequest().body(response);
         }
     }
+
 }

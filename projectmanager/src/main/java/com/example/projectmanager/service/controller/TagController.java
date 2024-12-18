@@ -56,7 +56,7 @@ public class TagController {
     public Tag getTagByName(@RequestParam String name) {
         return tagService.getTagByName(name);
     }*/
-    @GetMapping("/task/{taskId}")
+   /* @GetMapping("/task/{taskId}")
     public ResponseEntity<Task> getTaskByTag(@PathVariable Long taskId) {
         try {
             Task task = tagService.findTaskFromTag(taskId);
@@ -64,6 +64,14 @@ public class TagController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }*/
+    @GetMapping("/task/{taskId}")
+    public ResponseEntity<List<Tag>> getTagsByTaskId(@PathVariable Long taskId) {
+        List<Tag> tags = tagService.findTagsByTaskId(taskId);
+        if (tags.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(tags); 
     }
     
 }

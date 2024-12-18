@@ -43,6 +43,7 @@ public class Task implements Serializable{
     private User assignedTo; 
 
     @OneToMany(mappedBy = "task")
+    @JsonIgnore
     private List<Tag> tags; 
 
     // Constructeurs
