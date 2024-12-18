@@ -7,8 +7,8 @@ import com.example.projectmanager.enums.TaskStatus;
 import com.example.projectmanager.persistance.entities.Task;
 
 public interface ITask {
-    void updateTask(Long id, Task task);
-    void deleteTask(Long id);
+    Task updateTask(Long id, Task task);
+    boolean deleteTask(Long id);
     Task getTaskById(Long id);
     List<Task> getAllTasks();
     List<Task> getTasksByProject(Long projectId);

@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import com.example.projectmanager.enums.TaskStatus;
 import com.example.projectmanager.persistance.dao.ProjectRepository;
 import com.example.projectmanager.persistance.dao.SprintRepository;
+import com.example.projectmanager.persistance.entities.Tag;
 import com.example.projectmanager.persistance.entities.Task;
 import com.example.projectmanager.persistance.entities.User;
+import com.example.projectmanager.service.interfaces.ITag;
 import com.example.projectmanager.service.interfaces.ITask;
 
 import java.util.HashMap;
@@ -23,7 +25,7 @@ public class TaskController {
 
     @Autowired
     private ITask taskService;
-
+    @Autowired ITag tagService;
    
     @PostMapping("")
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
@@ -42,10 +44,29 @@ public class TaskController {
         return taskService.getTaskById(id);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<?> deleteTask(@PathVariable Long taskId) {
+        // 1. Récupérer les tags associés à la tâche
+        List<Tag> tags = tagService.findTagsByTaskId(taskId);
+        
+        // 2. Supprimer les tags
+        for (Tag tag : tags) {
+            tagService.deleteTag(tag.getId());
+        }
+        
+        // 3. Supprimer la tâche
+        boolean isDeleted = taskService.deleteTask(taskId);
+        
+        if (isDeleted) {
+            // Return a JSON response
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Task and associated tags deleted successfully.");
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(400).body("Task deletion failed.");
+        }
     }
+
 
     @GetMapping
     public List<Task> getAllTasks() {

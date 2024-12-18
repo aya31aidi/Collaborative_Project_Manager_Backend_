@@ -17,5 +17,6 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 	Tag findByTask (Task task);
 	 @Query("SELECT t.tags FROM Task t WHERE t.id = :taskId")
 	    List<Tag> findTagsByTaskId(@Param("taskId") Long taskId);
+	  List<Tag> findByTaskId(Long taskId);
 }
 
