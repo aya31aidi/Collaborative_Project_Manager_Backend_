@@ -1,4 +1,4 @@
-package com.example.projectmanager.security;
+/*package com.example.projectmanager.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,4 +15,4 @@ public class SecurityConfig {
             .anyRequest().permitAll();
         return http.build();
     }
-}
+}*/

@@ -1,12 +1,17 @@
 package com.example.projectmanager.service.controller;
 
 import com.example.projectmanager.persistance.entities.Tag;
+import com.example.projectmanager.persistance.entities.Task;
 import com.example.projectmanager.service.interfaces.ITag;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tags")
@@ -16,14 +21,20 @@ public class TagController {
     private ITag tagService;
 
     @PostMapping
-    public void createTag(@RequestBody Tag tag) {
-        tagService.addTag(tag);
-        System.out.println("Reçu : " + tag);
+    public void createTag(@RequestParam String tag, @RequestParam Long taskId) {
+        tagService.addTag(tag, taskId);
+        System.out.println("Reçu : " + tag + " pour la tâche ID : " + taskId);
     }
 
+
     @PutMapping("/{id}")
-    public void updateTag(@PathVariable Long id, @RequestBody Tag tag) {
-        tagService.updateTag(id, tag);
+    public ResponseEntity<Map<String, String>> updateTag(
+            @PathVariable Long id,         
+            @RequestBody Tag tag,        
+            @RequestParam Long taskId) {  
+    	Map<String, String> response = new HashMap<>();
+            tagService.updateTag(id, tag, taskId); 
+            return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
@@ -45,4 +56,14 @@ public class TagController {
     public Tag getTagByName(@RequestParam String name) {
         return tagService.getTagByName(name);
     }*/
+    @GetMapping("/task/{taskId}")
+    public ResponseEntity<Task> getTaskByTag(@PathVariable Long taskId) {
+        try {
+            Task task = tagService.findTaskFromTag(taskId);
+            return ResponseEntity.ok(task);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+    
 }

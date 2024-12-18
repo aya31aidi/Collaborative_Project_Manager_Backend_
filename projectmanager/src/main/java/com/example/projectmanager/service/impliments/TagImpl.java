@@ -1,7 +1,9 @@
 package com.example.projectmanager.service.impliments;
 
 import com.example.projectmanager.persistance.dao.TagRepository;
+import com.example.projectmanager.persistance.dao.TaskRepository;
 import com.example.projectmanager.persistance.entities.Tag;
+import com.example.projectmanager.persistance.entities.Task;
 import com.example.projectmanager.service.interfaces.ITag;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +17,43 @@ public class TagImpl implements ITag {
 
     @Autowired
     private TagRepository tagRepository;
-
+    @Autowired
+    private TaskRepository taskRepository;
     @Override
-    public void addTag(Tag tag) {
+    public void addTag(String tagName, Long taskId) {
+        Task task = taskRepository.findById(taskId)
+            .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        Tag tag = new Tag();
+        tag.setName(tagName);
+        tag.setTask(task);
+        task.getTags().add(tag);
+
         tagRepository.save(tag);
+        taskRepository.save(task);
     }
 
     @Override
-    public void updateTag(Long id, Tag tag) {
+    public void updateTag(Long id, Tag tag, Long idtask) {
+    	System.out.print(idtask);
+        // Récupérer l'élément Tag existant
         Tag existingTag = tagRepository.findById(id).orElseThrow(() -> new RuntimeException("Tag not found"));
+        
+        // Mettre à jour le nom du Tag
         existingTag.setName(tag.getName());
+        
+        // Récupérer le Task par son ID
+        Task task = taskRepository.findById(idtask)
+                    .orElseThrow(() -> new RuntimeException("Task not found"));
+        System.out.print(task);
+        // Associer le Task au Tag
+        existingTag.setTask(task);
+        
+        // Sauvegarder le Tag mis à jour
         tagRepository.save(existingTag);
     }
+
+
 
     @Override
     public void deleteTag(Long id) {
@@ -47,5 +74,11 @@ public class TagImpl implements ITag {
     public Optional<Tag> getTagByName(String name) {
         return tagRepository.findByName(name);
     }
+    @Override
+    public Task findTaskFromTag(Long taskId) {
+        return taskRepository.findById(taskId)
+            .orElseThrow(() -> new RuntimeException("Task not found with id " + taskId));
+    }
+
 }
 

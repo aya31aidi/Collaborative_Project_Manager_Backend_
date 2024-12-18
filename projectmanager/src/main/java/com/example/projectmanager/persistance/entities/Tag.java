@@ -55,7 +55,7 @@ public class Tag implements Serializable{
         return task;
     }
 
-    public void setTasks(Task task) {
+    public void setTask(Task task) {
         this.task = task;
     }
 
