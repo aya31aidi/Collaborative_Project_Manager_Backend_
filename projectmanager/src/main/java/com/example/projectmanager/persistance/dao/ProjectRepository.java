@@ -9,5 +9,6 @@ import com.example.projectmanager.persistance.entities.Project;
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 	@Query("SELECT p FROM Project p WHERE p.team.id = :teamId")
     Project findProjectByTeamId(@Param("teamId") Long teamId);
+	
 }
 

@@ -3,21 +3,37 @@ package com.example.projectmanager.service.impliments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.projectmanager.persistance.dao.ProjectRepository;
 import com.example.projectmanager.persistance.dao.SprintRepository;
+import com.example.projectmanager.persistance.entities.Project;
 import com.example.projectmanager.persistance.entities.Sprint;
 import com.example.projectmanager.service.interfaces.ISprint;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SprintImpl implements ISprint {
 
     @Autowired
     private SprintRepository sprintRepository;
-
+    @Autowired
+    private ProjectRepository projectRepository;
     @Override
-    public void addSprint(Sprint sprint) {
-        sprintRepository.save(sprint);
+    public Sprint addSprint(Long projectId, Sprint sprint) {
+        // Trouver le projet par son ID
+        Optional<Project> projectOptional = projectRepository.findById(projectId);
+
+        // Si le projet existe, ajouter le sprint
+        if (projectOptional.isPresent()) {
+            Project project = projectOptional.get();
+            sprint.setProject(project); // Associer le sprint au projet
+
+            // Sauvegarder le sprint dans la base de données
+            return sprintRepository.save(sprint);
+        } else {
+            throw new RuntimeException("Project not found with ID: " + projectId); // Exception si le projet n'existe pas
+        }
     }
 
     @Override

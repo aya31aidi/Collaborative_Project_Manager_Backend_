@@ -1,6 +1,8 @@
 package com.example.projectmanager.service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.projectmanager.persistance.entities.Sprint;
@@ -18,9 +20,14 @@ public class SprintController {
     @Autowired
     private ISprint sprintService;
 
-    @PostMapping
-    public void createSprint(@RequestBody Sprint sprint) {
-        sprintService.addSprint(sprint);
+    @PostMapping("/{projectId}")
+    public ResponseEntity<Sprint> addSprint(@PathVariable Long projectId, @RequestBody Sprint sprint) {
+        try {
+            Sprint createdSprint = sprintService.addSprint(projectId, sprint); // Appeler le service pour ajouter le sprint
+            return new ResponseEntity<>(createdSprint, HttpStatus.CREATED); // Retourner une réponse avec le sprint créé
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND); // Retourner une erreur si le projet n'est pas trouvé
+        }
     }
 
     @PutMapping("/{id}")
