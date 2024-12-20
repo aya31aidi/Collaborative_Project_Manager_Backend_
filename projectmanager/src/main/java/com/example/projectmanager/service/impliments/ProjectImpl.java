@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.projectmanager.persistance.dao.ProjectRepository;
+import com.example.projectmanager.persistance.dao.SprintRepository;
 import com.example.projectmanager.persistance.dao.TeamRepository;
 import com.example.projectmanager.persistance.entities.Project;
+import com.example.projectmanager.persistance.entities.Sprint;
 import com.example.projectmanager.persistance.entities.Team;
 import com.example.projectmanager.service.interfaces.IProject;
 
@@ -18,6 +20,8 @@ public class ProjectImpl implements IProject {
     private ProjectRepository projectRepository;
     @Autowired
     private TeamRepository teamRepository;
+    @Autowired
+    private SprintRepository sprintRepository;
     
     @Override
     public Project addProject(Long teamId, Project project) {
@@ -44,6 +48,17 @@ public class ProjectImpl implements IProject {
 
     @Override
     public void deleteProject(Long id) {
+        // Fetch the project to check for associated sprints
+        Project project = projectRepository.findById(id).orElseThrow(() -> new RuntimeException("Project not found"));
+        
+        // Check if the project has any sprints and delete them first
+        if (project.getSprints() != null) {
+            for (Sprint sprint : project.getSprints()) {
+                sprintRepository.delete(sprint);  // Delete sprints
+            }
+        }
+
+        // After deleting sprints, delete the project itself
         projectRepository.deleteById(id);
     }
 

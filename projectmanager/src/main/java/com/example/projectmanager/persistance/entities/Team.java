@@ -25,7 +25,7 @@ public class Team implements Serializable{
     @JsonIgnore
     private List<User> users; 
 
-    @OneToOne(mappedBy = "team")
+    @OneToOne(mappedBy = "team",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private Project project; 
 

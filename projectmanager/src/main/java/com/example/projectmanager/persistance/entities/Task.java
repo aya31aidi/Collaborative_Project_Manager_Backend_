@@ -42,7 +42,7 @@ public class Task implements Serializable{
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User assignedTo; 
 
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "task",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Tag> tags; 
 

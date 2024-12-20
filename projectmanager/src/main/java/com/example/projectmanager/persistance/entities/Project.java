@@ -28,7 +28,7 @@ public class Project implements Serializable{
     @JoinColumn(name = "team_id") 
     private Team team; 
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Sprint> sprints; 
 

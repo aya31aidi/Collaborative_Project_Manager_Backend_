@@ -35,7 +35,7 @@ public class Sprint implements Serializable{
     @JsonBackReference
     private Project project; 
 
-    @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sprint",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Task> tasks; // Liste des tâches associées au sprint
 
