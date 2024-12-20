@@ -36,20 +36,15 @@ public class TagImpl implements ITag {
     @Override
     public void updateTag(Long id, Tag tag, Long idtask) {
     	System.out.print(idtask);
-        // Récupérer l'élément Tag existant
         Tag existingTag = tagRepository.findById(id).orElseThrow(() -> new RuntimeException("Tag not found"));
         
-        // Mettre à jour le nom du Tag
         existingTag.setName(tag.getName());
         
-        // Récupérer le Task par son ID
         Task task = taskRepository.findById(idtask)
                     .orElseThrow(() -> new RuntimeException("Task not found"));
         System.out.print(task);
-        // Associer le Task au Tag
         existingTag.setTask(task);
         
-        // Sauvegarder le Tag mis à jour
         tagRepository.save(existingTag);
     }
 

@@ -21,17 +21,14 @@ public class ProjectController {
 
     @PostMapping("/{teamId}")
     public ResponseEntity<Project> addProject(
-            @PathVariable Long teamId,  // Extract teamId from URL
-            @RequestBody Project project  // Extract project data from the request body
+            @PathVariable Long teamId,  
+            @RequestBody Project project  
     ) {
         try {
-            // Call the service method to add the project and associate it with the team
             Project savedProject = projectService.addProject(teamId, project);
 
-            // Return the saved project with HTTP status 201 (Created)
             return new ResponseEntity<>(savedProject, HttpStatus.CREATED);
         } catch (Exception e) {
-            // Return error response if an exception occurs (e.g., team not found)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

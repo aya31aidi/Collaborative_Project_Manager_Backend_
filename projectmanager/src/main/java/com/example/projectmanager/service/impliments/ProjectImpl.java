@@ -25,13 +25,10 @@ public class ProjectImpl implements IProject {
     
     @Override
     public Project addProject(Long teamId, Project project) {
-        // Retrieve the team by its ID
         Team team = teamRepository.findById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
 
-        // Set the team to the project
         project.setTeam(team);
 
-        // Save the project to the database
         return projectRepository.save(project);
     }
 
@@ -48,17 +45,14 @@ public class ProjectImpl implements IProject {
 
     @Override
     public void deleteProject(Long id) {
-        // Fetch the project to check for associated sprints
         Project project = projectRepository.findById(id).orElseThrow(() -> new RuntimeException("Project not found"));
         
-        // Check if the project has any sprints and delete them first
         if (project.getSprints() != null) {
             for (Sprint sprint : project.getSprints()) {
-                sprintRepository.delete(sprint);  // Delete sprints
+                sprintRepository.delete(sprint);  
             }
         }
 
-        // After deleting sprints, delete the project itself
         projectRepository.deleteById(id);
     }
 

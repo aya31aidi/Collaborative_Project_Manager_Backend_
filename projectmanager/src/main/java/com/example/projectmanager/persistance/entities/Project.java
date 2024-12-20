@@ -82,7 +82,6 @@ public class Project implements Serializable{
         this.sprints = sprints;
     }
 
-    // Méthode utilitaire (facultative)
     @Override
     public String toString() {
         return "Project{" +

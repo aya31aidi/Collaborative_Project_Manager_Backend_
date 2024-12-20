@@ -69,10 +69,8 @@ public class TeamImpl implements ITeam {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         
-        // Add the user to the team's users list
         team.getUsers().add(user);
         
-        // Save the updated team to the database
         teamRepository.save(team);
     }
 

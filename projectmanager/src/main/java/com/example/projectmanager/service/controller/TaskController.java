@@ -46,19 +46,13 @@ public class TaskController {
 
     @DeleteMapping("/{taskId}")
     public ResponseEntity<?> deleteTask(@PathVariable Long taskId) {
-        // 1. Récupérer les tags associés à la tâche
         List<Tag> tags = tagService.findTagsByTaskId(taskId);
-        
-        // 2. Supprimer les tags
         for (Tag tag : tags) {
             tagService.deleteTag(tag.getId());
         }
-        
-        // 3. Supprimer la tâche
         boolean isDeleted = taskService.deleteTask(taskId);
         
         if (isDeleted) {
-            // Return a JSON response
             Map<String, String> response = new HashMap<>();
             response.put("message", "Task and associated tags deleted successfully.");
             return ResponseEntity.ok(response);
@@ -76,22 +70,19 @@ public class TaskController {
     public ResponseEntity<Map<String, String>> updateTaskStatus(@PathVariable Long id, @RequestBody Map<String, String> statusUpdate) {
         String newStatusString = statusUpdate.get("status");
         try {
-            TaskStatus newStatus = TaskStatus.valueOf(newStatusString); // Convert the string to enum
+            TaskStatus newStatus = TaskStatus.valueOf(newStatusString); 
             boolean isUpdated = taskService.updateTaskStatus(id, newStatus);
 
             if (isUpdated) {
-                // Return a JSON response with a success message
                 Map<String, String> response = new HashMap<>();
                 response.put("message", "Task status updated successfully");
                 return ResponseEntity.ok(response);
             } else {
-                // Return a JSON response with an error message
                 Map<String, String> response = new HashMap<>();
                 response.put("message", "Task not found");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
         } catch (IllegalArgumentException e) {
-            // Return a JSON response with an error message
             Map<String, String> response = new HashMap<>();
             response.put("message", "Invalid status value");
             return ResponseEntity.badRequest().body(response);

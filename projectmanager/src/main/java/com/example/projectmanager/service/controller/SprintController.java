@@ -23,10 +23,10 @@ public class SprintController {
     @PostMapping("/{projectId}")
     public ResponseEntity<Sprint> addSprint(@PathVariable Long projectId, @RequestBody Sprint sprint) {
         try {
-            Sprint createdSprint = sprintService.addSprint(projectId, sprint); // Appeler le service pour ajouter le sprint
-            return new ResponseEntity<>(createdSprint, HttpStatus.CREATED); // Retourner une réponse avec le sprint créé
+            Sprint createdSprint = sprintService.addSprint(projectId, sprint); 
+            return new ResponseEntity<>(createdSprint, HttpStatus.CREATED); 
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND); // Retourner une erreur si le projet n'est pas trouvé
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND); 
         }
     }
 

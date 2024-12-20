@@ -31,42 +31,34 @@ public class TaskImpl implements ITask {
     private TagRepository tagRepository;
     @Override
     public Task addTask(Task task) {
-        // Récupérer l'utilisateur assigné par ID
         User assignedUser = userRepository.findById(task.getAssignedTo().getId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + task.getAssignedTo().getId()));
         task.setAssignedTo(assignedUser); // Assigner l'utilisateur à la tâche
 
-        // Récupérer le sprint par ID
         Sprint sprint = sprintRepository.findById(task.getSprint().getId())
                 .orElseThrow(() -> new RuntimeException("Sprint not found with id: " + task.getSprint().getId()));
         task.setSprint(sprint); // Assigner le sprint à la tâche
 
-        // Gérer la liste des tags
         if (task.getTags() != null && !task.getTags().isEmpty()) {
             List<Tag> tags = new ArrayList<>();
             for (Tag tag : task.getTags()) {
-                // Rechercher si le tag existe déjà par son nom
                 Optional<Tag> existingTagOpt = tagRepository.findByName(tag.getName());
                 Tag tagToAdd;
 
                 if (existingTagOpt.isPresent()) {
                     tagToAdd = existingTagOpt.get(); // Si le tag existe, réutiliser l'existant
                 } else {
-                    // Si le tag n'existe pas, le créer
                     Tag newTag = new Tag();
                     newTag.setName(tag.getName());
                     tagToAdd = tagRepository.save(newTag);
                 }
 
-                // Ajouter le tag à la liste des tags
                 tags.add(tagToAdd);
             }
 
-            // Associer la liste des tags à la tâche
             task.setTags(tags);
         }
 
-        // Sauvegarder la tâche avec les tags associés
         return taskRepository.save(task);
     }
 
@@ -75,53 +67,43 @@ public class TaskImpl implements ITask {
 
     @Override
     public Task updateTask(Long taskId, Task taskDetails) {
-        // Récupérer la tâche existante par son ID
         Task existingTask = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
 
-        // Mettre à jour les champs simples de la tâche
         existingTask.setTitle(taskDetails.getTitle());
         existingTask.setDescription(taskDetails.getDescription());
         existingTask.setPriority(taskDetails.getPriority());
         existingTask.setStatus(taskDetails.getStatus());
 
-        // Mettre à jour l'utilisateur assigné
         if (taskDetails.getAssignedTo() != null && taskDetails.getAssignedTo().getId() != null) {
             User assignedUser = userRepository.findById(taskDetails.getAssignedTo().getId())
                     .orElseThrow(() -> new RuntimeException("User not found with id: " + taskDetails.getAssignedTo().getId()));
             existingTask.setAssignedTo(assignedUser);
         }
 
-        // Ne pas mettre à jour le sprint : tâche associée de façon permanente
 
-        // Mettre à jour les tags associés
         if (taskDetails.getTags() != null && !taskDetails.getTags().isEmpty()) {
             List<Tag> tags = new ArrayList<>();
             for (Tag tag : taskDetails.getTags()) {
-                // Rechercher si le tag existe déjà par son nom
                 Optional<Tag> existingTagOpt = tagRepository.findByName(tag.getName());
                 Tag tagToAdd;
 
                 if (existingTagOpt.isPresent()) {
-                    tagToAdd = existingTagOpt.get(); // Réutiliser le tag existant
+                    tagToAdd = existingTagOpt.get(); 
                 } else {
-                    // Créer un nouveau tag si inexistant
                     Tag newTag = new Tag();
                     newTag.setName(tag.getName());
                     tagToAdd = tagRepository.save(newTag);
                 }
 
-                tags.add(tagToAdd); // Ajouter le tag à la liste
+                tags.add(tagToAdd); 
             }
 
-            // Associer les tags mis à jour à la tâche
             existingTask.setTags(tags);
         } else {
-            // Si aucun tag n'est fourni, supprimer tous les tags associés
             existingTask.setTags(new ArrayList<>());
         }
 
-        // Sauvegarder la tâche mise à jour
         return taskRepository.save(existingTask);
     }
 

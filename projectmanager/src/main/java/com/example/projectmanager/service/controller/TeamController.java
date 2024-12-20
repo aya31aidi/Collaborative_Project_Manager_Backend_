@@ -23,10 +23,8 @@ public class TeamController {
 
     @PostMapping
     public ResponseEntity<Long> createTeam(@RequestBody Team team) {
-        // Add the team to the service
         Team createdTeam = teamService.addTeam(team);
 
-        // Return the team ID in the response
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTeam.getId());
     }
 

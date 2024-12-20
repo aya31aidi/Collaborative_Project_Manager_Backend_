@@ -21,15 +21,12 @@ public class SprintImpl implements ISprint {
     private ProjectRepository projectRepository;
     @Override
     public Sprint addSprint(Long projectId, Sprint sprint) {
-        // Trouver le projet par son ID
         Optional<Project> projectOptional = projectRepository.findById(projectId);
 
-        // Si le projet existe, ajouter le sprint
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
             sprint.setProject(project); // Associer le sprint au projet
 
-            // Sauvegarder le sprint dans la base de données
             return sprintRepository.save(sprint);
         } else {
             throw new RuntimeException("Project not found with ID: " + projectId); // Exception si le projet n'existe pas
