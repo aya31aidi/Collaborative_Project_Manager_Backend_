@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.projectmanager.persistance.dao.ProjectRepository;
+import com.example.projectmanager.persistance.dao.TeamRepository;
 import com.example.projectmanager.persistance.entities.Project;
+import com.example.projectmanager.persistance.entities.Team;
 import com.example.projectmanager.service.interfaces.IProject;
 
 import java.util.List;
@@ -14,10 +16,19 @@ public class ProjectImpl implements IProject {
 
     @Autowired
     private ProjectRepository projectRepository;
-
+    @Autowired
+    private TeamRepository teamRepository;
+    
     @Override
-    public void addProject(Project project) {
-        projectRepository.save(project);
+    public Project addProject(Long teamId, Project project) {
+        // Retrieve the team by its ID
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new RuntimeException("Team not found"));
+
+        // Set the team to the project
+        project.setTeam(team);
+
+        // Save the project to the database
+        return projectRepository.save(project);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.projectmanager.service.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +19,21 @@ public class ProjectController {
     @Autowired
     private IProject projectService;
 
-    @PostMapping
-    public void createProject(@RequestBody Project project) {
-        projectService.addProject(project);
+    @PostMapping("/{teamId}")
+    public ResponseEntity<Project> addProject(
+            @PathVariable Long teamId,  // Extract teamId from URL
+            @RequestBody Project project  // Extract project data from the request body
+    ) {
+        try {
+            // Call the service method to add the project and associate it with the team
+            Project savedProject = projectService.addProject(teamId, project);
+
+            // Return the saved project with HTTP status 201 (Created)
+            return new ResponseEntity<>(savedProject, HttpStatus.CREATED);
+        } catch (Exception e) {
+            // Return error response if an exception occurs (e.g., team not found)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("/{id}")

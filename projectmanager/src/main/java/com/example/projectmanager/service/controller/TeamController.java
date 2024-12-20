@@ -1,6 +1,7 @@
 package com.example.projectmanager.service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +22,14 @@ public class TeamController {
     private ITeam teamService;
 
     @PostMapping
-    public void createTeam(@RequestBody Team team) {
-        teamService.addTeam(team);
+    public ResponseEntity<Long> createTeam(@RequestBody Team team) {
+        // Add the team to the service
+        Team createdTeam = teamService.addTeam(team);
+
+        // Return the team ID in the response
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTeam.getId());
     }
+
 
     @PutMapping("/{id}")
     public void updateTag(@PathVariable Long id, @RequestBody Team team) {
@@ -59,6 +65,19 @@ public class TeamController {
             teamService.deleteUserFromTeam(teamId, userId);
             Map<String, String> response = new HashMap<>();
             response.put("message", "User deleted successfully from team");
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "User or team not found");
+            return ResponseEntity.status(404).body(response);
+        }
+    }
+    @PostMapping("/{teamId}/addUser/{userId}")
+    public ResponseEntity<Map<String, String>> addUserToTeam(@PathVariable Long teamId, @PathVariable Long userId) {
+        try {
+            teamService.addUserToTeam(teamId, userId);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "User added successfully to team");
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             Map<String, String> response = new HashMap<>();

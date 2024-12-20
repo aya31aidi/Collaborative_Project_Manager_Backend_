@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.projectmanager.persistance.dao.TeamRepository;
+import com.example.projectmanager.persistance.dao.UserRepository;
 import com.example.projectmanager.persistance.entities.Team;
 import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ITeam;
@@ -16,10 +17,10 @@ public class TeamImpl implements ITeam {
 
     @Autowired
     private TeamRepository teamRepository;
-
+    @Autowired UserRepository userRepository;
     @Override
-    public void addTeam(Team team) {
-        teamRepository.save(team);
+    public Team addTeam(Team team) {
+        return teamRepository.save(team);
     }
 
     @Override
@@ -51,16 +52,27 @@ public class TeamImpl implements ITeam {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new RuntimeException("Team not found with id: " + teamId));
         
-        // Vérifier si l'utilisateur existe dans l'équipe
         User userToRemove = team.getUsers().stream()
                 .filter(user -> user.getId().equals(userId))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        // Supprimer l'utilisateur de la liste des utilisateurs de l'équipe
         team.getUsers().remove(userToRemove);
 
-        // Sauvegarder les modifications dans la base de données
+        teamRepository.save(team);
+    }
+    @Override
+    public void addUserToTeam(Long teamId, Long userId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new RuntimeException("Team not found with id: " + teamId));
+        
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        
+        // Add the user to the team's users list
+        team.getUsers().add(user);
+        
+        // Save the updated team to the database
         teamRepository.save(team);
     }
 
