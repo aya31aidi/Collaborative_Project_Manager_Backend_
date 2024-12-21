@@ -8,10 +8,10 @@ build:
   stage: build
   image: maven:3.8.4-openjdk-17
   script:
-    - mvn clean install -DskipTests=true
+    - mvn clean install 
   artifacts:
     paths:
-      - target/
+      - target/projectmanager-0.0.1-SNAPSHOT.jar
 
 # Étape des tests unitaires
 test:
@@ -24,9 +24,9 @@ test:
       - target/test-classes/
       - target/test-logs/
 
-# Étape de déploiement (optionnelle)
+# Étape de déploiement avec Docker
 deploy:
   stage: deploy
   script:
-    - echo "Déploiement sur votre serveur"
-    - echo "Déploiement Spring Boot"
+    - docker build -t backend-image .
+    - docker run -d -p 9090:8080 backend-image
