@@ -3,16 +3,15 @@ stages:
   - test
   - deploy
 
-# Étape de construction du projet Spring Boot
 build:
   stage: build
   image: maven:3.8.4-openjdk-17
   script:
-    - cd projectmanager  # Change to the directory containing pom.xml
+    - cd projectmanager  
     - mvn clean install 
   artifacts:
     paths:
-      - projectmanager/target/projectmanager-0.0.1-SNAPSHOT.jar
+      - target/projectmanager-0.0.1-SNAPSHOT.jar
 
 # Étape des tests unitaires
 test:
@@ -23,8 +22,8 @@ test:
     - mvn test
   artifacts:
     paths:
-      - projectmanager/target/test-classes/
-      - projectmanager/target/test-logs/
+      - target/test-classes/
+      - target/test-logs/
 
 # Étape de déploiement avec Docker
 deploy:
