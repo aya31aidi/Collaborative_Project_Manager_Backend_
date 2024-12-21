@@ -11,7 +11,7 @@ build:
     - mvn clean install 
   artifacts:
     paths:
-      - target/projectmanager-0.0.1-SNAPSHOT.jar
+      - projectmanager/target/projectmanager-0.0.1-SNAPSHOT.jar
 
 # Étape des tests unitaires
 test:
@@ -21,8 +21,8 @@ test:
     - mvn test
   artifacts:
     paths:
-      - target/test-classes/
-      - target/test-logs/
+      - projectmanager/target/test-classes/
+      - projectmanager/target/test-logs/
 
 # Étape de déploiement avec Docker
 deploy:
