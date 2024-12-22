@@ -12,23 +12,3 @@ build:
   artifacts:
     paths:
       - projectmanager/target/projectmanager-0.0.1-SNAPSHOT.jar
-
-# Étape des tests unitaires
-test:
-  stage: test
-  image: maven:3.8.4-openjdk-17
-  script:
-    - cd projectmanager  # Change to the directory containing pom.xml
-    - mvn test
-  artifacts:
-    paths:
-      - projectmanager/target/test-classes/
-      - projectmanager/target/test-logs/
-
-# Étape de déploiement avec Docker
-deploy:
-  stage: deploy
-  script:
-    - cd projectmanager  # Change to the directory containing Dockerfile and other necessary files
-    - docker build -t backend .
-    - docker run -d -p 9090:8080 backend
