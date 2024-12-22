@@ -1,0 +1,38 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-container-new
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: projectmanager # Crée automatiquement la base de données `projectmanager`
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ""
+    ports:
+      - "3306:3306"
+    networks:
+      - project-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile # Spécifiez le fichier Docker (par défaut `Dockerfile`)
+    container_name: backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/projectmanager
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+    ports:
+      - "9090:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - project-network
+
+networks:
+  project-network:
+    driver: bridge
