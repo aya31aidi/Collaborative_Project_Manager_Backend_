@@ -3,36 +3,34 @@ package com.example.projectmanager.persistance.entities;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "tags")
-public class Tag implements Serializable{
+public class Tag implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("name")
-    private String name; 
+    private String name;
 
+    // A tag is a label on one task. The task comes back in a short form,
+    // without its own tag list or assignee.
     @ManyToOne
     @JoinColumn(name = "task_id")
+    @JsonIgnoreProperties({"tags", "assignedTo", "description"})
     private Task task;
 
     public Tag() {
     }
 
-    public Tag(String name) {
+    public Tag(String name, Task task) {
         this.name = name;
+        this.task = task;
     }
 
-    // Getters et Setters
     public Long getId() {
         return id;
     }

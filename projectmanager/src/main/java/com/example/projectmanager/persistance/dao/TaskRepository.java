@@ -1,19 +1,13 @@
 package com.example.projectmanager.persistance.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import com.example.projectmanager.persistance.entities.Tag;
 import com.example.projectmanager.persistance.entities.Task;
 
 import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
+    List<Task> findBySprint_Project_IdOrderByIdAsc(Long projectId);
 
-	@Query("SELECT t.tags FROM Task t WHERE t.id = :taskId")
-	List<Tag> findTagsByTaskId(@Param("taskId") Long taskId);
-
-   
+    List<Task> findByAssignedTo_Id(Long userId);
 }
-

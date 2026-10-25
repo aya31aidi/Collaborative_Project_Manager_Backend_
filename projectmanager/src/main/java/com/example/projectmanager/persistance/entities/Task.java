@@ -1,52 +1,53 @@
 package com.example.projectmanager.persistance.entities;
+
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.projectmanager.enums.TaskPriority;
 import com.example.projectmanager.enums.TaskStatus;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Written through {@link com.example.projectmanager.dto.TaskRequest}; this
+ * class is only what gets stored and sent back.
+ */
 @Entity
 @Table(name = "tasks")
-public class Task implements Serializable{
+public class Task implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("title")
-    private String title; 
-    @JsonProperty("description")
-    private String description; 
+    private String title;
+
+    private String description;
 
     @Enumerated(EnumType.STRING)
-    @JsonProperty("status")
-    private TaskStatus status; 
+    private TaskStatus status;
 
     @Enumerated(EnumType.STRING)
-    @JsonProperty("priority")
-    private TaskPriority priority; 
+    private TaskPriority priority;
 
     @ManyToOne
-    @JsonProperty("sprint")
-    @JsonBackReference
     @JoinColumn(name = "sprint_id", referencedColumnName = "id")
-    private Sprint sprint; 
+    @JsonIgnore
+    private Sprint sprint;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User assignedTo; 
+    private User assignedTo;
 
-    @OneToMany(mappedBy = "task",cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Tag> tags; 
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
+    @JsonIgnoreProperties("task")
+    private List<Tag> tags = new ArrayList<>();
 
-    // Constructeurs
     public Task() {
     }
 
@@ -57,7 +58,6 @@ public class Task implements Serializable{
         this.priority = priority;
     }
 
-    // Getters et Setters
     public Long getId() {
         return id;
     }
@@ -106,6 +106,16 @@ public class Task implements Serializable{
         this.sprint = sprint;
     }
 
+    @JsonProperty("sprintId")
+    public Long getSprintId() {
+        return sprint != null ? sprint.getId() : null;
+    }
+
+    @JsonProperty("sprintName")
+    public String getSprintName() {
+        return sprint != null ? sprint.getName() : null;
+    }
+
     public User getAssignedTo() {
         return assignedTo;
     }
@@ -122,7 +132,6 @@ public class Task implements Serializable{
         this.tags = tags;
     }
 
-    // Méthode utilitaire (facultative)
     @Override
     public String toString() {
         return "Task{" +
@@ -133,4 +142,3 @@ public class Task implements Serializable{
                 '}';
     }
 }
-

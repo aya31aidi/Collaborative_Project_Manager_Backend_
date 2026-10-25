@@ -9,10 +9,9 @@ import com.example.projectmanager.persistance.entities.Team;
 import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ITeam;
 
-import java.util.HashMap;
+import jakarta.validation.Valid;
+
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/teams")
@@ -22,67 +21,43 @@ public class TeamController {
     private ITeam teamService;
 
     @PostMapping
-    public ResponseEntity<Long> createTeam(@RequestBody Team team) {
-        Team createdTeam = teamService.addTeam(team);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTeam.getId());
+    public ResponseEntity<Team> createTeam(@Valid @RequestBody Team team) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.addTeam(team));
     }
-
 
     @PutMapping("/{id}")
-    public void updateTag(@PathVariable Long id, @RequestBody Team team) {
-        teamService.updateTeam(id, team);
+    public Team updateTeam(@PathVariable Long id, @Valid @RequestBody Team team) {
+        return teamService.updateTeam(id, team);
     }
+
     @GetMapping("/{id}")
-    public Optional<Team> getTeamById(@PathVariable Long id) {
+    public Team getTeamById(@PathVariable Long id) {
         return teamService.getTeamById(id);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTeam(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
         teamService.deleteTeam(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public List<Team> getAllTeams() {
         return teamService.getAllTeams();
     }
-    
+
     @GetMapping("/{id}/users")
-    public ResponseEntity<List<User>> getUsersByTeamId(@PathVariable Long id) {
-    	 Optional<Team> team = teamService.getTeamById(id);
-    	    if (team.isPresent()) {
-    	        return ResponseEntity.ok(team.get().getUsers());
-    	    } else {
-    	        return ResponseEntity.notFound().build();
-    	    }
-}
-    @DeleteMapping("/{teamId}/users/{userId}")
-    public ResponseEntity<Map<String, String>> deleteUserFromTeam(@PathVariable Long teamId, @PathVariable Long userId) {
-        try {
-            teamService.deleteUserFromTeam(teamId, userId);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "User deleted successfully from team");
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "User or team not found");
-            return ResponseEntity.status(404).body(response);
-        }
+    public List<User> getUsersByTeamId(@PathVariable Long id) {
+        return teamService.getTeamMembers(id);
     }
+
     @PostMapping("/{teamId}/addUser/{userId}")
-    public ResponseEntity<Map<String, String>> addUserToTeam(@PathVariable Long teamId, @PathVariable Long userId) {
-        try {
-            teamService.addUserToTeam(teamId, userId);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "User added successfully to team");
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "User or team not found");
-            return ResponseEntity.status(404).body(response);
-        }
+    public Team addUserToTeam(@PathVariable Long teamId, @PathVariable Long userId) {
+        return teamService.addUserToTeam(teamId, userId);
     }
 
-
+    @DeleteMapping("/{teamId}/users/{userId}")
+    public Team deleteUserFromTeam(@PathVariable Long teamId, @PathVariable Long userId) {
+        return teamService.deleteUserFromTeam(teamId, userId);
+    }
 }

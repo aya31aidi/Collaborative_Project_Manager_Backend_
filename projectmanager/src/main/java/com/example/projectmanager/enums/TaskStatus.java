@@ -1,7 +1,8 @@
 package com.example.projectmanager.enums;
 
+/** The three columns of the sprint board, in order. */
 public enum TaskStatus {
-    TO_DO,        // La tâche doit être réalisée
-    IN_PROGRESS,  // La tâche est en cours de réalisation
-    DONE          // La tâche est terminée
+    TO_DO,
+    IN_PROGRESS,
+    DONE
 }

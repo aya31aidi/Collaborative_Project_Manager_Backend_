@@ -1,42 +1,49 @@
 package com.example.projectmanager.persistance.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable{
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("username")
-    private String username; 
+    @NotBlank(message = "A username is required")
+    @Size(max = 255)
+    private String username;
 
-    @JsonProperty("fullName")
-    private String fullName; 
+    @NotBlank(message = "A full name is required")
+    @Size(max = 255)
+    private String fullName;
 
-    @JsonProperty("email")
-    private String email; 
+    @NotBlank(message = "An email address is required")
+    @Email(message = "The email address is not valid")
+    @Size(max = 255)
+    private String email;
 
-    @JsonProperty("password")
-    private String password; 
+    // Accepted on create/update, never sent back.
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
 
-    @JsonProperty("role")
-    private String role; 
-    
+    @Size(max = 255)
+    private String role;
+
     @ManyToMany(mappedBy = "users")
-    @JsonBackReference
-    private List<Team> teams; 
+    @JsonIgnore
+    private List<Team> teams = new ArrayList<>();
 
-    // Constructeurs
     public User() {
     }
 
@@ -47,10 +54,7 @@ public class User implements Serializable{
         this.password = password;
         this.role = role;
     }
-    public User(Long id) {
-        this.id = id;
-    }
-    // Getters et Setters
+
     public Long getId() {
         return id;
     }
@@ -107,7 +111,6 @@ public class User implements Serializable{
         this.teams = teams;
     }
 
-    // Méthodes utilitaires (facultatives)
     @Override
     public String toString() {
         return "User{" +

@@ -6,4 +6,3 @@ import com.example.projectmanager.persistance.entities.Team;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
 }
-

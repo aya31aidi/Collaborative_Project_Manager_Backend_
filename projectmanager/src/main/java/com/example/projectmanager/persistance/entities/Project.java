@@ -1,38 +1,44 @@
 package com.example.projectmanager.persistance.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "projects")
-public class Project implements Serializable{
+public class Project implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("name")
-    private String name; 
+    @NotBlank(message = "A project needs a name")
+    @Size(max = 255)
+    private String name;
 
-    @JsonProperty("description")
-    private String description; 
+    @Size(max = 255, message = "The description is limited to 255 characters")
+    private String description;
 
+    // One team per project. The team is chosen in the URL when the project is
+    // created, so it is read-only in the request body.
     @OneToOne
-    @JoinColumn(name = "team_id") 
-    private Team team; 
+    @JoinColumn(name = "team_id")
+    @JsonIgnoreProperties("project")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Team team;
 
-    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Sprint> sprints; 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("startDate ASC, id ASC")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<Sprint> sprints = new ArrayList<>();
 
-    // Constructeurs
     public Project() {
     }
 
@@ -41,7 +47,6 @@ public class Project implements Serializable{
         this.description = description;
     }
 
-    // Getters et Setters
     public Long getId() {
         return id;
     }
@@ -91,4 +96,3 @@ public class Project implements Serializable{
                 '}';
     }
 }
-

@@ -1,7 +1,6 @@
 package com.example.projectmanager.service.controller;
 
 import com.example.projectmanager.persistance.entities.Tag;
-import com.example.projectmanager.persistance.entities.Task;
 import com.example.projectmanager.service.interfaces.ITag;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/tags")
@@ -20,26 +17,23 @@ public class TagController {
     @Autowired
     private ITag tagService;
 
+    // POST /tags?tag=urgent&taskId=3
     @PostMapping
-    public void createTag(@RequestParam String tag, @RequestParam Long taskId) {
-        tagService.addTag(tag, taskId);
-        System.out.println("Reçu : " + tag + " pour la tâche ID : " + taskId);
+    public ResponseEntity<Tag> createTag(@RequestParam String tag, @RequestParam Long taskId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(tagService.addTag(tag, taskId));
     }
 
-
+    // PUT /tags/5 {"name": "blocked"}, optionally ?taskId=7 to move it to another task
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, String>> updateTag(
-            @PathVariable Long id,         
-            @RequestBody Tag tag,        
-            @RequestParam Long taskId) {  
-    	Map<String, String> response = new HashMap<>();
-            tagService.updateTag(id, tag, taskId); 
-            return ResponseEntity.ok(response);
+    public Tag updateTag(@PathVariable Long id, @RequestBody Tag tag,
+                         @RequestParam(required = false) Long taskId) {
+        return tagService.updateTag(id, tag.getName(), taskId);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTag(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
         tagService.deleteTag(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
@@ -47,31 +41,14 @@ public class TagController {
         return tagService.getTagById(id);
     }
 
-    @GetMapping("")
+    @GetMapping
     public List<Tag> getAllTags() {
         return tagService.getAllTags();
     }
 
-    /*@GetMapping("/search")
-    public Tag getTagByName(@RequestParam String name) {
-        return tagService.getTagByName(name);
-    }*/
-   /* @GetMapping("/task/{taskId}")
-    public ResponseEntity<Task> getTaskByTag(@PathVariable Long taskId) {
-        try {
-            Task task = tagService.findTaskFromTag(taskId);
-            return ResponseEntity.ok(task);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }*/
+    // An empty list rather than 204, so clients can always read a JSON array.
     @GetMapping("/task/{taskId}")
-    public ResponseEntity<List<Tag>> getTagsByTaskId(@PathVariable Long taskId) {
-        List<Tag> tags = tagService.findTagsByTaskId(taskId);
-        if (tags.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(tags); 
+    public List<Tag> getTagsByTaskId(@PathVariable Long taskId) {
+        return tagService.findTagsByTaskId(taskId);
     }
-    
 }

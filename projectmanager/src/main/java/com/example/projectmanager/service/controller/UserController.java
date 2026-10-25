@@ -1,12 +1,14 @@
 package com.example.projectmanager.service.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.projectmanager.persistance.entities.Tag;
 import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.IUser;
+
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -18,12 +20,13 @@ public class UserController {
     private IUser userService;
 
     @PostMapping
-    public void createUser(@RequestBody User user) {
-        userService.addUser(user);
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(user));
     }
+
     @PutMapping("/{id}")
-    public void updateTag(@PathVariable Long id, @RequestBody User user) {
-        userService.updateUser(id, user);
+    public User updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
+        return userService.updateUser(id, user);
     }
 
     @GetMapping("/{id}")
@@ -32,13 +35,13 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("")
+    @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 }
-

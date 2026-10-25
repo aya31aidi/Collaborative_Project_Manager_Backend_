@@ -1,55 +1,58 @@
 package com.example.projectmanager.persistance.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "sprints")
-public class Sprint implements Serializable{
+public class Sprint implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("name")
-    private String name; 
+    @NotBlank(message = "A sprint needs a name")
+    @Size(max = 255)
+    private String name;
 
-    @Temporal(TemporalType.DATE)
-    @JsonProperty("startDate")
-    private Date startDate; 
+    // Plain dates ("2026-10-20" in JSON): a sprint starts and ends on a day,
+    // not at a moment in some time zone.
+    @NotNull(message = "The start date is required")
+    private LocalDate startDate;
 
-    @Temporal(TemporalType.DATE)
-    @JsonProperty("endDate")
-    private Date endDate; 
+    @NotNull(message = "The end date is required")
+    private LocalDate endDate;
 
+    // Only the id and name of the project go out with a sprint, which keeps
+    // the JSON free of project -> sprints -> project loops.
     @ManyToOne
-    @JsonProperty("project")
-    @JsonBackReference
-    private Project project; 
+    @JsonIgnore
+    private Project project;
 
-    @OneToMany(mappedBy = "sprint",cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Task> tasks; // Liste des tâches associées au sprint
+    @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id ASC")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<Task> tasks = new ArrayList<>();
 
-    // Constructeurs
     public Sprint() {
     }
 
-    public Sprint(String name, Date startDate, Date endDate) {
+    public Sprint(String name, LocalDate startDate, LocalDate endDate) {
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    // Getters et Setters
     public Long getId() {
         return id;
     }
@@ -66,19 +69,19 @@ public class Sprint implements Serializable{
         this.name = name;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -88,6 +91,16 @@ public class Sprint implements Serializable{
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    @JsonProperty(value = "projectId", access = JsonProperty.Access.READ_ONLY)
+    public Long getProjectId() {
+        return project != null ? project.getId() : null;
+    }
+
+    @JsonProperty(value = "projectName", access = JsonProperty.Access.READ_ONLY)
+    public String getProjectName() {
+        return project != null ? project.getName() : null;
     }
 
     public List<Task> getTasks() {
@@ -109,4 +122,3 @@ public class Sprint implements Serializable{
                 '}';
     }
 }
-

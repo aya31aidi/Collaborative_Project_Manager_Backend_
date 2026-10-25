@@ -1,14 +1,21 @@
 stages:
-  - build
   - test
-  - deploy
+  - build
+
+# The tests run on an in-memory H2 database, so the job needs no MySQL service.
+test:
+  stage: test
+  image: maven:3.9-eclipse-temurin-17
+  script:
+    - cd projectmanager
+    - mvn -B verify
 
 build:
   stage: build
-  image: maven:3.8.4-openjdk-17
+  image: maven:3.9-eclipse-temurin-17
   script:
-    - cd projectmanager  
-    - mvn clean install -DskipTests
+    - cd projectmanager
+    - mvn -B -DskipTests package
   artifacts:
     paths:
       - projectmanager/target/projectmanager-0.0.1-SNAPSHOT.jar

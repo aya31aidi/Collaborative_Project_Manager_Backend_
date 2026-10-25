@@ -6,11 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.projectmanager.persistance.entities.Sprint;
-import com.example.projectmanager.persistance.entities.Team;
 import com.example.projectmanager.persistance.entities.User;
 import com.example.projectmanager.service.interfaces.ISprint;
 
-import java.util.ArrayList;
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -21,47 +21,33 @@ public class SprintController {
     private ISprint sprintService;
 
     @PostMapping("/{projectId}")
-    public ResponseEntity<Sprint> addSprint(@PathVariable Long projectId, @RequestBody Sprint sprint) {
-        try {
-            Sprint createdSprint = sprintService.addSprint(projectId, sprint); 
-            return new ResponseEntity<>(createdSprint, HttpStatus.CREATED); 
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND); 
-        }
+    public ResponseEntity<Sprint> addSprint(@PathVariable Long projectId, @Valid @RequestBody Sprint sprint) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(sprintService.addSprint(projectId, sprint));
     }
 
     @PutMapping("/{id}")
-    public void updateTag(@PathVariable Long id, @RequestBody Sprint sprint) {
-        sprintService.updateSprint(id, sprint);
+    public Sprint updateSprint(@PathVariable Long id, @Valid @RequestBody Sprint sprint) {
+        return sprintService.updateSprint(id, sprint);
     }
+
     @GetMapping("/{id}")
     public Sprint getSprintById(@PathVariable Long id) {
         return sprintService.getSprintById(id);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSprint(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSprint(@PathVariable Long id) {
         sprintService.deleteSprint(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public List<Sprint> getAllSprints() {
         return sprintService.getAllSprints();
     }
-    
+
     @GetMapping("/{id}/users")
     public List<User> getUsersForSprint(@PathVariable Long id) {
-        Sprint sprint = sprintService.getSprintById(id); // Get the sprint by its ID
-        List<User> users = new ArrayList<>();
-        
-        // Get the single team of the project and add its users
-        Team team = sprint.getProject().getTeam();
-        if (team != null) {
-            users.addAll(team.getUsers());
-        }
-        
-        return users;
+        return sprintService.getSprintMembers(id);
     }
-
 }
-

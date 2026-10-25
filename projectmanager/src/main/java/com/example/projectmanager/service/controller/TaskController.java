@@ -2,20 +2,17 @@ package com.example.projectmanager.service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.projectmanager.dto.TaskRequest;
 import com.example.projectmanager.enums.TaskStatus;
-import com.example.projectmanager.persistance.dao.ProjectRepository;
-import com.example.projectmanager.persistance.dao.SprintRepository;
-import com.example.projectmanager.persistance.entities.Tag;
 import com.example.projectmanager.persistance.entities.Task;
-import com.example.projectmanager.persistance.entities.User;
-import com.example.projectmanager.service.interfaces.ITag;
 import com.example.projectmanager.service.interfaces.ITask;
 
-import java.util.HashMap;
+import jakarta.validation.Valid;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -25,18 +22,15 @@ public class TaskController {
 
     @Autowired
     private ITask taskService;
-    @Autowired ITag tagService;
-   
-    @PostMapping("")
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        Task savedTask = taskService.addTask(task);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedTask);
+
+    @PostMapping
+    public ResponseEntity<Task> createTask(@Valid @RequestBody TaskRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskService.addTask(request));
     }
 
-    
     @PutMapping("/{id}")
-    public void updateTag(@PathVariable Long id, @RequestBody Task task) {
-        taskService.updateTask(id, task);
+    public Task updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequest request) {
+        return taskService.updateTask(id, request);
     }
 
     @GetMapping("/{id}")
@@ -44,49 +38,29 @@ public class TaskController {
         return taskService.getTaskById(id);
     }
 
-    @DeleteMapping("/{taskId}")
-    public ResponseEntity<?> deleteTask(@PathVariable Long taskId) {
-        List<Tag> tags = tagService.findTagsByTaskId(taskId);
-        for (Tag tag : tags) {
-            tagService.deleteTag(tag.getId());
-        }
-        boolean isDeleted = taskService.deleteTask(taskId);
-        
-        if (isDeleted) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Task and associated tags deleted successfully.");
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(400).body("Task deletion failed.");
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
     }
-
 
     @GetMapping
     public List<Task> getAllTasks() {
         return taskService.getAllTasks();
     }
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Map<String, String>> updateTaskStatus(@PathVariable Long id, @RequestBody Map<String, String> statusUpdate) {
-        String newStatusString = statusUpdate.get("status");
-        try {
-            TaskStatus newStatus = TaskStatus.valueOf(newStatusString); 
-            boolean isUpdated = taskService.updateTaskStatus(id, newStatus);
 
-            if (isUpdated) {
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "Task status updated successfully");
-                return ResponseEntity.ok(response);
-            } else {
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "Task not found");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-            }
-        } catch (IllegalArgumentException e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Invalid status value");
-            return ResponseEntity.badRequest().body(response);
-        }
+    // Used by the board when a card is dropped in another column: {"status": "IN_PROGRESS"}
+    @PutMapping("/{id}/status")
+    public Task updateTaskStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        return taskService.updateTaskStatus(id, parseStatus(body.get("status")));
     }
 
+    private static TaskStatus parseStatus(String value) {
+        try {
+            return TaskStatus.valueOf(value);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new IllegalArgumentException(
+                    "Unknown status \"" + value + "\", expected one of " + Arrays.toString(TaskStatus.values()));
+        }
+    }
 }
